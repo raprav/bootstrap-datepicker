@@ -192,8 +192,6 @@
 				o.multidate = Number(o.multidate) || false;
 				if (o.multidate !== false)
 					o.multidate = Math.max(0, o.multidate);
-				else
-					o.multidate = 1;
 			}
 			o.multidateSeparator = String(o.multidateSeparator);
 
@@ -804,6 +802,7 @@
 
 				clsName = $.unique(clsName);
 				html.push('<td class="'+clsName.join(' ')+'"' + (tooltip ? ' title="'+tooltip+'"' : '') + '>'+prevMonth.getUTCDate() + '</td>');
+				tooltip = null;
 				if (prevMonth.getUTCDay() === this.o.weekEnd){
 					html.push('</tr>');
 				}
@@ -1017,15 +1016,21 @@
 			if (!date){
 				this.dates.clear();
 			}
-			else if (ix !== -1){
-				this.dates.remove(ix);
-			}
-			else {
+			else if (this.o.multidate === false) {
+				this.dates.clear();
 				this.dates.push(date);
 			}
-			if (typeof this.o.multidate === 'number')
-				while (this.dates.length > this.o.multidate)
-					this.dates.remove(0);
+			else {
+				if (ix !== -1){
+					this.dates.remove(ix);
+				}
+				else {
+					this.dates.push(date);
+				}
+				if (typeof this.o.multidate === 'number')
+					while (this.dates.length > this.o.multidate)
+						this.dates.remove(0);
+			}
 		},
 
 		_setDate: function(date, which){
